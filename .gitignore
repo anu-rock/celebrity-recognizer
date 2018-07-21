@@ -1,0 +1,5 @@
+.DS_Store
+uploads/*
+saved-model/*
+trained-model-webpb/*
+logs/*

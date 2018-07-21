@@ -13,7 +13,7 @@ deactivate
 
 ## Install Tensorflow and friends
 ```
-pip install tensorflowjs
+pip install tensorflow
 ```
 
 ## Start retraining

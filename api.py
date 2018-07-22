@@ -44,7 +44,6 @@ def infer():
 	and returns the response as JSON.
 	"""
 	if 'target' in request.files:
-		print("haha")
 		file_name = photos.save(request.files['target'])
 		graph = load_graph(model_file)
 		t = read_tensor_from_image_file("uploads/" + file_name)

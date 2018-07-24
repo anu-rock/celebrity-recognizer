@@ -81,7 +81,7 @@ def load_graph(model_file):
 
 	with open(model_file, "rb") as f:
 		graph_def.ParseFromString(f.read())
- 	with graph.as_default():
+	with graph.as_default():
 		tf.import_graph_def(graph_def)
 
 	return graph
@@ -101,11 +101,8 @@ def load_labels(label_file):
 		label.append(l.rstrip())
 	return label
 
-def read_tensor_from_image_file(file_name,
-								input_height=299,
-								input_width=299,
-								input_mean=0,
-								input_std=255):
+def read_tensor_from_image_file(file_name, input_height=299, input_width=299,
+								input_mean=0, input_std=255):
 	"""
 	Reads the given image file as a tensor.
 

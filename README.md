@@ -34,3 +34,20 @@ pip install flask Flask-Uploads
 ```
 python api.py
 ```
+
+## Test the API
+```
+POST /infer HTTP/1.1
+Host: 127.0.0.1:5000
+Cache-Control: no-cache
+Postman-Token: 3e108526-8c08-ea9c-393b-ce8b58ee66fb
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="target"; filename="bill.jpg"
+Content-Type: image/jpeg
+
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+```
+![Testing the API in Postman](docs/Testing-the-API-in-Postman.png)

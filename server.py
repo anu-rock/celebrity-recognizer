@@ -22,8 +22,9 @@
 
 import tensorflow as tf
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+import os.path
 
 # App configuration
 app = Flask(__name__)
@@ -37,7 +38,11 @@ label_file = "trained-model/output_labels.txt"
 input_layer = "Placeholder"
 output_layer = "final_result"
 
-@app.route('/infer', methods=['POST'])
+@app.route('/')
+def root():
+	return send_from_directory(os.path.join('web'), 'index.html')
+
+@app.route('/api/infer', methods=['POST'])
 def infer():
 	"""
 	Performs inference on the given target image,

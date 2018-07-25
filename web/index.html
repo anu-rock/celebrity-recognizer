@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Celebrity Recognizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  </head>
+  <body>
+    <section class="section has-text-centered">
+        <div class="container">
+            <h1 class="title">
+                Celebrity Recognizer
+            </h1>
+            <p class="subtitle">
+                Upload a photo of a celebrity and instantly find out who they are.<br>
+                Supported:
+                <span class="tag">Aishwarya Rai</span>
+                <span class="tag">Bill Gates</span>
+                <span class="tag">Michelle Obama</span>
+                <span class="tag">Steve Jobs</span>
+            </p>
+            <div class="card has-text-centered">
+                <header class="card-header">
+                  <p class="card-header-title">
+                    Celebrity name will appear here
+                  </p>
+                </header>
+                <div class="card-content">
+                  <div class="content">
+                    <figure>
+                        <img id="imgCelebPhoto" width="256"
+                            src="http://maclaarte.org/wp-content/uploads/2013/11/person-placeholder-female2.jpg">
+                    </figure>
+                  </div>
+                </div>
+                <footer class="card-footer">
+                    <div class="card-footer-item file">
+                        <label class="file-label">
+                            <input id="fileCelebImg" class="file-input" type="file">
+                            <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-image"></i>
+                            </span>
+                            <span class="file-label">
+                                Pick photo
+                            </span>
+                            </span>
+                        </label>
+                    </div>
+                    <a id="btnGo" class="card-footer-item button is-large is-primary has-text-weight-bold"
+                        href="#">Go!</a>
+                </footer>
+              </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="content has-text-centered">
+        <p>
+            <a href="https://anuragbhandari.com">Anurag Bhandari</a>, 2018. The source code and website are licensed
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+        </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Global variables
+            var selectedFile;
+
+            // Handle file input change
+            $('#fileCelebImg').change(function(event) {
+                // Get the selected file
+                selectedFile = $(this)[0].files[0];
+                // Ensure the file is an image
+                if (selectedFile.type.indexOf("image") === -1) {
+                    alert("Picked file must be an image!"); // show error message
+                    $(this)[0].value = ''; // removed the added file
+                    return; // exit
+                }
+                // Update selected file name
+                $('span.file-name').text(selectedFile.name);
+                // Show picked image's preview
+                showFilePreview(selectedFile);
+            });
+
+            // Handle Go! button click
+            $('#btnGo').click(function(event) {
+                // Disable button click's default behavior
+                event.preventDefault();
+                // Identify the celebrity
+                sendImageforCelebRecognition(selectedFile);
+            });
+        });
+
+        /**
+        * Loads selected image's dataURL in preview img element.
+        */
+        function showFilePreview(file) {
+            // Setup a FileReader
+            var reader  = new FileReader();
+            // Update the preview img element on read success
+            reader.addEventListener("load", function () {
+                $('#imgCelebPhoto').attr('src', reader.result);
+            }, false);
+            // Get data URL using FileReader
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /**
+         * Sends the selected image file to the API
+         * for recognizing the celebrity in photo.
+         * Shows the top scoring celebrity in the results section.
+         */
+        function sendImageforCelebRecognition(file) {
+            if (file) {
+                // Show loader and disable Go! button
+                $('#btnGo').addClass('is-loading');
+                ajaxPostClassificationApi(file, function(result) {
+                    // Update card's title (celeb name)
+                    $('p.card-header-title').text(result[0].name);
+                    // Hide loader and enable Go! button
+                    $('#btnGo').removeClass('is-loading');
+                });
+            }
+            else {
+                alert("Did you forget to pick a celebrity photo?");
+            }
+        }
+
+        /**
+         * Makes an HTTP POST call to the classification API.
+         * Executes the callback on success.
+         */
+        function ajaxPostClassificationApi(file, callback) {
+            var formData = new FormData();
+            formData.append('target', file);
+            $.ajax({
+                url: '/api/infer',
+                method: 'post',
+                processData: false,
+                contentType: false,
+                cache: false,
+                data: formData,
+                enctype: 'multipart/form-data',
+                success: function(response){
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },error: function(){
+                    console.log("not okay");
+                }
+            });
+        }
+    </script>
+  </body>
+</html>
